@@ -21,6 +21,7 @@
   "dependencies": {
     "jspreadsheet-ce": "^4.11.1",
     "papaparse": "^5.3.2",
-    "x-data-spreadsheet": "^1.1.9"
+    "x-data-spreadsheet": "^1.1.9",
+    "xlsx": "^0.18.5"
   }
 }

@@ -1,8 +1,15 @@
 <script>
   import papa from "papaparse"
+  import { merge } from "../stores/mergeCell"
+
   let a
   let b
-  const parsing = (file, target) =>
+  let counting = 1
+  const fileInput = {}
+  const caching = {}
+  const doa = () => {}
+  const dob = () => {}
+  const parsing = (file, finalFile) =>
     papa.parse(file, {
       config: {
         header: true,
@@ -10,24 +17,51 @@
         newline: "",
       },
       complete: ({ data }) => {
-        target = data
+        // console.log(data)
+        // console.log(data[0])
+        // console.log(data[1])
+        // console.log(finalFile)
+        // do something
+        if (finalFile === "a") {
+          a = data
+          // do a
+        } else {
+          b = data
+          // do b
+        }
         console.log(data)
+        // merge.update(e => (e ? e++ : couting))
       },
     })
   const changeA = e => {
     const [file] = e.target.files
     if (file) {
-      parsing(file, a)
+      parsing(file, "a")
     }
   }
   const changeB = e => {
     const [file] = e.target.files
     if (file) {
-      parsing(file, b)
+      parsing(file, "b")
     }
   }
+  const clearButton = () => {
+    document.getElementById("inputA").value = ""
+    a = null
+    document.getElementById("inputB").value = ""
+    b = null
+  }
 
-  const clearButton = () => {}
+  const downloadButton = () => {
+    merge.update(e => {
+      return e ? ++e : couting
+    })
+    // clearButton()
+  }
+
+  $: () => {
+    // if a & b reader
+  }
 </script>
 
 <div class="mt-6 flex flex-col divide-y items-center justify-center">
@@ -36,6 +70,7 @@
     <div class="flex flex-row items-center justify-center">
       <strong class="block text-gray-700 text-sm font-bold mb-2 mt-2 px-4">File A</strong>
       <input
+        id="inputA"
         class="block text-sm text-slate-500 w-full
         file:mr-4 file:py-2 file:px-4
         file:rounded-full file:border-0
@@ -45,10 +80,12 @@
         type="file"
         on:change={changeA}
       />
+      <strong> {a ? a.length : 0} rows</strong>
     </div>
     <div class="flex flex-row items-center justify-center">
       <strong class="block text-gray-700 text-sm font-bold mb-2 mt-2 px-4">File B</strong>
       <input
+        id="inputB"
         class="block text-sm text-slate-500 w-full
         file:mr-4 file:py-2 file:px-4
         file:rounded-full file:border-0
@@ -58,15 +95,17 @@
         type="file"
         on:change={changeB}
       />
+      <strong> {b ? b.length : 0} rows</strong>
     </div>
 
     <div>
       <button
-        class="btn btn-primary border-2 bg-gray-200 border-gray-500 bg-rounded-md mt-4 mb-4 hover:bg-gray-400 px-4 rounded-full"
-        on:click={e => {
-          console.log(e)
-          clearButton()
-        }}>CLEAR Files</button
+        class="btn btn-primary border-1 bg-gray-200 border-gray-400 bg-rounded-md mt-4 mb-4 hover:bg-gray-400 px-4 rounded-lg font-light"
+        on:click={downloadButton}>DOWNLOAD</button
+      >
+      <button
+        class="btn btn-primary border-1 bg-gray-200 border-gray-400 bg-rounded-md mt-4 mb-4 hover:bg-gray-400 px-4 rounded-lg font-light"
+        on:click={clearButton}>CLEAR Files</button
       >
     </div>
   </div>
