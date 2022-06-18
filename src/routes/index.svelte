@@ -8,29 +8,29 @@
   let counting = 1
   const fileInput = {}
   const caching = {}
-  const doa = () => {}
+  const doa = () => {
+    console.log(a)
+    const headers = a[0]
+    const rows = a.splice(1)
+    console.log(headers)
+    console.log(rows)
+  }
   const dob = () => {}
   const parsing = (file, finalFile) =>
     papa.parse(file, {
       config: {
-        header: true,
+        header: false,
         delimiter: "",
         newline: "",
       },
       complete: ({ data }) => {
-        // console.log(data)
-        // console.log(data[0])
-        // console.log(data[1])
-        // console.log(finalFile)
-        // do something
         if (finalFile === "a") {
           a = data
-          // do a
+          doa()
         } else {
           b = data
-          // do b
+          dob()
         }
-        console.log(data)
         // merge.update(e => (e ? e++ : couting))
       },
     })
