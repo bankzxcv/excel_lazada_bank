@@ -8,12 +8,9 @@
   // import xlsx from "xlsx"
   import { merge } from "../stores/mergeCell"
   import * as XLSX from "xlsx/xlsx.mjs"
-
-  let show
-  merge.subscribe(e => {
-    console.log(e)
-    show = e
-  })
+  // merge.subscribe(e => {
+  //   show = e
+  // })
 </script>
 
 <div>

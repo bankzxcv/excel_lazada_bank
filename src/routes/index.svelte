@@ -1,4 +1,5 @@
 <script>
+  import * as XLSX from "xlsx/xlsx.mjs"
   import papa from "papaparse"
   import { merge } from "../stores/mergeCell"
 
