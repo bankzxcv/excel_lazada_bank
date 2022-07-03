@@ -6,23 +6,66 @@
   let a
   let b
   let counting = 1
-  const fileInput = {}
-  const caching = {}
+  const indexer = {}
+  const column = {}
+
   const doa = () => {
-    console.log(a)
-    const headers = a[0]
-    const rows = a.splice(1)
-    console.log(headers)
-    console.log(rows)
+    const rows = a
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i]
+      const txTxt = "หมายเลขการสั่งซื้อ"
+      const txId = row[txTxt]
+      if (txId && typeof indexer[txId.trim()] !== "number") {
+        indexer[txId.trim()] = i
+      }
+    }
   }
-  const dob = () => {}
+  const dob = () => {
+    const rows = b
+
+    const indFeeName = 2
+    const indAmount = 7
+    const indOrderNumber = 13
+    const rowA = a
+    for (let i = 0; i < rows.length; i++) {
+      const data = rows[i]
+      const feeName = data[indFeeName]
+      const amount = data[indAmount]
+      const orderNumber = data[indOrderNumber].trim()
+      if (typeof indexer[orderNumber] === "number") {
+        const idx = indexer[orderNumber]
+        a[idx][feeName] = amount
+      }
+    }
+
+    for (let i = 0; i < a.length; i++) {
+      const row = a[i]
+      const keys = Object.keys(row)
+      for (let j = 0; j < keys.length; j++) {
+        const key = keys[j]
+        column[key] = ""
+      }
+    }
+
+    console.log(column)
+    const csv = papa.unparse([column, ...a])
+    // console.log(csv)
+    // export
+    var csvData = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+    var csvURL = null
+    if (navigator.msSaveBlob) {
+      csvURL = navigator.msSaveBlob(csvData, "download.csv")
+    } else {
+      csvURL = window.URL.createObjectURL(csvData)
+    }
+    var tempLink = document.createElement("a")
+    tempLink.href = csvURL
+    tempLink.setAttribute("download", "download.csv")
+    tempLink.click()
+  }
   const parsing = (file, finalFile) =>
     papa.parse(file, {
-      config: {
-        header: false,
-        delimiter: "",
-        newline: "",
-      },
+      header: finalFile === "a",
       complete: ({ data }) => {
         if (finalFile === "a") {
           a = data
@@ -107,6 +150,10 @@
       <button
         class="btn btn-primary border-1 bg-gray-200 border-gray-400 bg-rounded-md mt-4 mb-4 hover:bg-gray-400 px-4 rounded-lg font-light"
         on:click={clearButton}>CLEAR Files</button
+      >
+      <button
+        class="btn btn-primary border-1 bg-gray-200 border-gray-400 bg-rounded-md mt-4 mb-4 hover:bg-gray-400 px-4 rounded-lg font-light"
+        on:click={() => {}}>TEST</button
       >
     </div>
   </div>
