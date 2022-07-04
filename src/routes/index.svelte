@@ -5,11 +5,23 @@
 
   let a
   let b
-  let counting = 1
+  let notIn = []
   let indexer = {}
   let column = {}
 
+  const clearButton = () => {
+    document.getElementById("inputA").value = ""
+    a = null
+    document.getElementById("inputB").value = ""
+    b = null
+  }
+
+  const clearTable = () => {
+    notIn = []
+  }
+
   const doa = () => {
+    clearTable()
     const rows = a
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i]
@@ -26,15 +38,24 @@
     const indFeeName = 2
     const indAmount = 7
     const indOrderNumber = 13
-    const rowA = a
     for (let i = 0; i < rows.length; i++) {
       const data = rows[i]
+      if (data.length < 5) {
+        continue
+      }
       const feeName = data[indFeeName]
       const amount = data[indAmount]
+      // console.log(feeName, amount)
       const orderNumber = data[indOrderNumber].trim()
       if (typeof indexer[orderNumber] === "number") {
         const idx = indexer[orderNumber]
-        a[idx][feeName] = amount
+        if (typeof a[idx][feeName] === "number") {
+          a[idx][feeName] += amount
+        } else {
+          a[idx][feeName] = amount
+        }
+      } else if (i > 0) {
+        notIn = [...notIn, { orderNumber, amount: amount, name: feeName }]
       }
     }
 
@@ -74,12 +95,7 @@
       parsing(file, "b")
     }
   }
-  const clearButton = () => {
-    document.getElementById("inputA").value = ""
-    a = null
-    document.getElementById("inputB").value = ""
-    b = null
-  }
+
   const downloadButton = () => {
     const csv = papa.unparse([column, ...a])
     var csvData = new Blob([csv], { type: "text/csv;charset=utf-8;" })
@@ -145,8 +161,37 @@
       >
       <button
         class="btn btn-primary border-1 bg-gray-200 border-gray-400 bg-rounded-md mt-4 mb-4 hover:bg-gray-400 px-4 rounded-lg font-light"
-        on:click={clearButton}>CLEAR Files</button
+        on:click={() => {
+          clearButton()
+          clearTable()
+        }}>RESET</button
       >
     </div>
+  </div>
+
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-left text-gray-500 ">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+        <tr>
+          <th scope="col" class="px-6 py-3"> No. </th>
+          <th scope="col" class="px-6 py-3"> Order Id [LOST] </th>
+          <th scope="col" class="px-6 py-3"> Name </th>
+          <th scope="col" class="px-6 py-3"> Amount </th>
+          <!-- <th scope="col" class="px-6 py-3"> Price </th> -->
+        </tr>
+      </thead>
+      <tbody>
+        {#each notIn as { orderNumber, amount, name }, i}
+          <tr class="bg-white border-b">
+            <td class="px-6 py-4"> {i + 1} </td>
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+              {orderNumber}
+            </th>
+            <td class="px-6 py-4"> {name} </td>
+            <td class="px-6 py-4"> {amount} </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
   </div>
 </div>
