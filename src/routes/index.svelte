@@ -38,6 +38,7 @@
     const indFeeName = 2
     const indAmount = 7
     const indOrderNumber = 13
+    const indDate = 0
     for (let i = 0; i < rows.length; i++) {
       const data = rows[i]
       if (data.length < 5) {
@@ -45,6 +46,7 @@
       }
       const feeName = data[indFeeName]
       const amount = data[indAmount]
+      const date = data[indDate]
       // console.log(feeName, amount)
       const orderNumber = data[indOrderNumber].trim()
       if (typeof indexer[orderNumber] === "number") {
@@ -55,7 +57,7 @@
           a[idx][feeName] = amount
         }
       } else if (i > 0) {
-        notIn = [...notIn, { orderNumber, amount: amount, name: feeName }]
+        notIn = [...notIn, { orderNumber, amount: amount, name: feeName, date }]
       }
     }
 
@@ -174,6 +176,7 @@
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th scope="col" class="px-6 py-3"> No. </th>
+          <th scope="col" class="px-6 py-3"> Date </th>
           <th scope="col" class="px-6 py-3"> Order Id [LOST] </th>
           <th scope="col" class="px-6 py-3"> Name </th>
           <th scope="col" class="px-6 py-3"> Amount </th>
@@ -181,9 +184,10 @@
         </tr>
       </thead>
       <tbody>
-        {#each notIn as { orderNumber, amount, name }, i}
+        {#each notIn as { orderNumber, amount, name, date }, i}
           <tr class="bg-white border-b">
             <td class="px-6 py-4"> {i + 1} </td>
+            <td class="px-6 py-4"> {date} </td>
             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
               {orderNumber}
             </th>
