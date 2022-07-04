@@ -6,8 +6,8 @@
   let a
   let b
   let counting = 1
-  const indexer = {}
-  const column = {}
+  let indexer = {}
+  let column = {}
 
   const doa = () => {
     const rows = a
@@ -46,22 +46,6 @@
         column[key] = ""
       }
     }
-
-    console.log(column)
-    const csv = papa.unparse([column, ...a])
-    // console.log(csv)
-    // export
-    var csvData = new Blob([csv], { type: "text/csv;charset=utf-8;" })
-    var csvURL = null
-    if (navigator.msSaveBlob) {
-      csvURL = navigator.msSaveBlob(csvData, "download.csv")
-    } else {
-      csvURL = window.URL.createObjectURL(csvData)
-    }
-    var tempLink = document.createElement("a")
-    tempLink.href = csvURL
-    tempLink.setAttribute("download", "download.csv")
-    tempLink.click()
   }
   const parsing = (file, finalFile) =>
     papa.parse(file, {
@@ -77,6 +61,7 @@
         // merge.update(e => (e ? e++ : couting))
       },
     })
+
   const changeA = e => {
     const [file] = e.target.files
     if (file) {
@@ -95,12 +80,23 @@
     document.getElementById("inputB").value = ""
     b = null
   }
-
   const downloadButton = () => {
-    merge.update(e => {
-      return e ? ++e : couting
-    })
-    // clearButton()
+    const csv = papa.unparse([column, ...a])
+    var csvData = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+    var csvURL = null
+    if (navigator.msSaveBlob) {
+      csvURL = navigator.msSaveBlob(csvData, "download.csv")
+    } else {
+      csvURL = window.URL.createObjectURL(csvData)
+    }
+    var tempLink = document.createElement("a")
+    tempLink.href = csvURL
+
+    const name = `summary-${+new Date()}.csv`
+    tempLink.setAttribute("download", name)
+    tempLink.click()
+
+    clearButton()
   }
 
   $: () => {
@@ -150,10 +146,6 @@
       <button
         class="btn btn-primary border-1 bg-gray-200 border-gray-400 bg-rounded-md mt-4 mb-4 hover:bg-gray-400 px-4 rounded-lg font-light"
         on:click={clearButton}>CLEAR Files</button
-      >
-      <button
-        class="btn btn-primary border-1 bg-gray-200 border-gray-400 bg-rounded-md mt-4 mb-4 hover:bg-gray-400 px-4 rounded-lg font-light"
-        on:click={() => {}}>TEST</button
       >
     </div>
   </div>
